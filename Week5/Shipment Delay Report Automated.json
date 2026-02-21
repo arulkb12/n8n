@@ -1,0 +1,265 @@
+{
+  "name": "Shipment Delay Report Automated",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// Get input JSON (first item)\nconst input = $input.first().json;\n\n// Get data array dynamically\nconst rows = input.data || [];\n\n// Helper function to find key dynamically (case insensitive)\nfunction findKey(obj, keyword) {\n  return Object.keys(obj).find(\n    key => key.toLowerCase().includes(keyword.toLowerCase())\n  );\n}\n\n// Process each row\nconst output = rows.map(row => {\n  \n  // Dynamically detect Expected & Delivered date keys\n  const expectedKey = findKey(row, \"expected\");\n  const deliveredKey = findKey(row, \"delivered\");\n  \n  const expectedDate = new Date(row[expectedKey]);\n  const deliveredDate = new Date(row[deliveredKey]);\n\n  // Calculate difference in days\n  const diffTime = deliveredDate - expectedDate;\n  const delayDays = Math.max(\n    0,\n    Math.ceil(diffTime / (1000 * 60 * 60 * 24))\n  );\n\n  return {\n    json: {\n      ...row,\n      \"Delay Delivery Date\": delayDays\n    }\n  };\n});\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        -32
+      ],
+      "id": "8d7dade0-bc57-4cc2-a013-62a129650eb1",
+      "name": "Code in JavaScript",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b6e6fcf8-9d24-44f3-b572-0b0c39080759",
+              "leftValue": "={{ $json['Delay Delivery Date'] }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": "={{ true }} The PO is delayed by {{ $json['Delay Delivery Date'] }} days",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        528,
+        0
+      ],
+      "id": "e3fc4ff0-bde8-4e66-8346-1f240246a7e2",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=🚨 Vendor Delay Analysis Report\n\n🏆 Vendor with Highest Delay:{{ $json.max_delay_days }}\n\n📦 Total Shipments: {{ $json.count_Vendor_Name }}\n⏳ Total Delay Days: {{ $json.sum_delay_days }}\nAction: Contact and Please review vendor performance.\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        80
+      ],
+      "id": "a73e81e2-cb43-4d46-af66-2bc29c2d14b9",
+      "name": "Send a text message",
+      "webhookId": "2738aa36-1225-42b6-80c8-7827e29aca86",
+      "executeOnce": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "GeyGnhnv7hlGLmNG",
+          "name": "akuserchat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -144,
+        -64
+      ],
+      "id": "ec9081f3-d5b7-4428-b70e-0253ab7fef0b",
+      "name": "Telegram Trigger",
+      "webhookId": "61d34789-3eaf-4792-bf1f-4181ecd2182f",
+      "credentials": {
+        "telegramApi": {
+          "id": "GeyGnhnv7hlGLmNG",
+          "name": "akuserchat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n    \"sheet_name\": \"Sheet1\",\n    \"headers\": [\n        \"Vendor Name\",\n        \"Shipment ID\",\n        \"Expected Date\",\n        \"Delivered Date\"\n    ],\n    \"data\": [\n        {\n            \"Vendor Name\": \"Alpha Apparel Ltd\",\n            \"Shipment ID\": \"SH003\",\n            \"Expected Date\": \"2025-01-03\",\n            \"Delivered Date\": \"2025-01-03\"\n        },\n        {\n            \"Vendor Name\": \"EuroTextile GmbH\",\n            \"Shipment ID\": \"SH004\",\n            \"Expected Date\": \"2025-01-04\",\n            \"Delivered Date\": \"2025-01-06\"\n        },\n        {\n            \"Vendor Name\": \"Pacific Footwear\",\n            \"Shipment ID\": \"SH005\",\n            \"Expected Date\": \"2025-01-05\",\n            \"Delivered Date\": \"2025-01-12\"\n        },\n        {\n            \"Vendor Name\": \"Iberia Leather Co\",\n            \"Shipment ID\": \"SH006\",\n            \"Expected Date\": \"2025-01-06\",\n            \"Delivered Date\": \"2025-01-06\"\n        },\n        {\n            \"Vendor Name\": \"Midwest Plastics\",\n            \"Shipment ID\": \"SH007\",\n            \"Expected Date\": \"2025-01-07\",\n            \"Delivered Date\": \"2025-01-08\"\n        },\n        {\n            \"Vendor Name\": \"Nordic Fabrics\",\n            \"Shipment ID\": \"SH008\",\n            \"Expected Date\": \"2025-01-08\",\n            \"Delivered Date\": \"2025-01-08\"\n        },\n        {\n            \"Vendor Name\": \"Baltic Buttons\",\n            \"Shipment ID\": \"SH009\",\n            \"Expected Date\": \"2025-01-09\",\n            \"Delivered Date\": \"2025-01-15\"\n        },\n        {\n            \"Vendor Name\": \"Shenzhen TechWear\",\n            \"Shipment ID\": \"SH010\",\n            \"Expected Date\": \"2025-01-10\",\n            \"Delivered Date\": \"2025-01-18\"\n        },\n        {\n            \"Vendor Name\": \"Ontario Apparel\",\n            \"Shipment ID\": \"SH011\",\n            \"Expected Date\": \"2025-01-11\",\n            \"Delivered Date\": \"2025-01-11\"\n        },\n        {\n            \"Vendor Name\": \"Tuscany Threads\",\n            \"Shipment ID\": \"SH012\",\n            \"Expected Date\": \"2025-01-12\",\n            \"Delivered Date\": \"2025-01-14\"\n        },\n        {\n            \"Vendor Name\": \"Atlantic Textiles\",\n            \"Shipment ID\": \"SH013\",\n            \"Expected Date\": \"2025-01-13\",\n            \"Delivered Date\": \"2025-01-13\"\n        },\n        {\n            \"Vendor Name\": \"LoneStar Manufacturing\",\n            \"Shipment ID\": \"SH014\",\n            \"Expected Date\": \"2025-01-14\",\n            \"Delivered Date\": \"2025-01-16\"\n        },\n        {\n            \"Vendor Name\": \"Alpha Apparel Ltd\",\n            \"Shipment ID\": \"SH015\",\n            \"Expected Date\": \"2025-01-15\",\n            \"Delivered Date\": \"2025-01-22\"\n        },\n        {\n            \"Vendor Name\": \"EuroTextile GmbH\",\n            \"Shipment ID\": \"SH016\",\n            \"Expected Date\": \"2025-01-16\",\n            \"Delivered Date\": \"2025-01-16\"\n        },\n        {\n            \"Vendor Name\": \"Pacific Footwear\",\n            \"Shipment ID\": \"SH017\",\n            \"Expected Date\": \"2025-01-17\",\n            \"Delivered Date\": \"2025-01-25\"\n        },\n        {\n            \"Vendor Name\": \"Iberia Leather Co\",\n            \"Shipment ID\": \"SH018\",\n            \"Expected Date\": \"2025-01-18\",\n            \"Delivered Date\": \"2025-01-19\"\n        },\n        {\n            \"Vendor Name\": \"Midwest Plastics\",\n            \"Shipment ID\": \"SH019\",\n            \"Expected Date\": \"2025-01-19\",\n            \"Delivered Date\": \"2025-01-19\"\n        },\n        {\n            \"Vendor Name\": \"Nordic Fabrics\",\n            \"Shipment ID\": \"SH020\",\n            \"Expected Date\": \"2025-01-20\",\n            \"Delivered Date\": \"2025-01-27\"\n        },\n        {\n            \"Vendor Name\": \"Baltic Buttons\",\n            \"Shipment ID\": \"SH021\",\n            \"Expected Date\": \"2025-01-21\",\n            \"Delivered Date\": \"2025-01-23\"\n        },\n        {\n            \"Vendor Name\": \"Shenzhen TechWear\",\n            \"Shipment ID\": \"SH022\",\n            \"Expected Date\": \"2025-01-22\",\n            \"Delivered Date\": \"2025-02-02\"\n        }\n    ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        128,
+        -96
+      ],
+      "id": "f169bb9f-0218-4fb2-837c-4a3141d074f4",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "sum",
+              "field": "Delay Delivery Date"
+            },
+            {
+              "field": "Vendor Name"
+            },
+            {
+              "aggregation": "max",
+              "field": "Delay Delivery Date"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        -96
+      ],
+      "id": "440c0f64-b317-494f-9e17-6e9b2cd9d127",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1367aced-5fe3-43ad-9853-f586fc9c12c7",
+              "name": "sum_delay_days",
+              "value": "=Total number of days delayed: {{ $json.sum_Delay_Delivery_Date }}",
+              "type": "string"
+            },
+            {
+              "id": "2b6be7c3-579c-47df-8f37-15afe66f7fc5",
+              "name": "count_Vendor_Name",
+              "value": "=Number of vendors delayed: {{ $json.count_Vendor_Name }}",
+              "type": "string"
+            },
+            {
+              "id": "ef34eee2-606d-4418-8c55-4a433fe7321f",
+              "name": "max_delay_days",
+              "value": "=Top Vendor delayed it by {{ $json.max_Delay_Delivery_Date }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        -80
+      ],
+      "id": "be2f7d2a-906d-46f4-8cfb-92c0736172ce",
+      "name": "Conclude data Points"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Conclude data Points",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conclude data Points": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "691e253e-21bf-4858-9cb3-c56312beb46f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "064d3684dbc590a1f1f10c39f05139c5ad81cb84afcb0669bf9381aa04fd1213"
+  },
+  "id": "8TUDfzL7Kwbk7yQb",
+  "tags": []
+}

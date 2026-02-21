@@ -1,0 +1,126 @@
+{
+  "name": "My 1st workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "This is my 1st n8n Trigger NODE",
+        "height": 80,
+        "width": 208
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        -16
+      ],
+      "id": "00231c11-431e-4329-8d2b-a62b13936d39",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4a9b27a3-f512-486b-84a5-6893386d7a92",
+              "name": "Name",
+              "value": "Arul",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        64
+      ],
+      "id": "5e47baf7-4b0f-4b34-9849-7d2bf4dcdbf0",
+      "name": "getting name"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0554f482-2429-43d8-8b3e-37346091929b",
+              "name": "Greeting",
+              "value": "=Hello  {{ $json.Name }} Great you have created your 1st n8n project",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -80,
+        64
+      ],
+      "id": "620b7f82-2698-4b43-ad1b-74edfa234812",
+      "name": "Greeting message"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -560,
+        64
+      ],
+      "id": "fe7923b0-48e7-4d19-bf50-06d63fc12f4a",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "getting name": {
+      "main": [
+        [
+          {
+            "node": "Greeting message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "getting name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Kolkata",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "9ef9e8fd-ebfe-4ec9-9b99-d7454c4097e5",
+  "meta": {
+    "instanceId": "064d3684dbc590a1f1f10c39f05139c5ad81cb84afcb0669bf9381aa04fd1213"
+  },
+  "id": "b7WZv2g5FInUFT1x",
+  "tags": []
+}

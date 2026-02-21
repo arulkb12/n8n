@@ -1,0 +1,245 @@
+{
+  "name": "My 2nd workflow - Supply Chain Automation data",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        -16
+      ],
+      "id": "88820dd8-8ea3-4853-a200-564928a61ccb",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b14f1363-7bcf-46b9-9b1d-6d9ed365b303",
+              "name": "",
+              "value": "  [ { \"dc_id\": \"DC01\", \"city\": \"Chicago\", \"country\": \"USA\", \"capacity_units\": 250000, \"automation_level\": \"Medium\"}, {\"dc_id\": \"DC02\", \"city\": \"Rotterdam\", \"country\": \"Netherlands\", \"capacity_units\": 220000, \"automation_level\": \"High\"}, { \"dc_id\": \"DC03\", \"city\": \"Dallas\", \"country\": \"USA\", \"capacity_units\": 180000, \"automation_level\": \"Low\"}, {\n    \"dc_id\": \"DC04\",\n    \"city\": \"Lyon\",\n    \"country\": \"France\",\n    \"capacity_units\": 160000,\n    \"automation_level\": \"Medium\"\n  }]\n",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -128,
+        -16
+      ],
+      "id": "4cd3f696-415d-4f90-9165-61c2e3b48843",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the incoming data\nconst inputData = $input.all();\n\n// The array is inside an empty key \"\"\nconst dcArray = inputData[0].json[\"\"] || [];\n\n// Convert each object into separate n8n items\nreturn dcArray.map(dc => {\n  return {\n    json: dc\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        -16
+      ],
+      "id": "0c06c248-cefe-4afc-a247-062aaf82bd63",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "batchSize": 2,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        288,
+        -16
+      ],
+      "id": "1ae81159-577a-4400-92da-eb9d0a72492c",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "62e98757-e9ce-488c-b875-3013964355ea",
+              "leftValue": "={{ $json.automation_level }}",
+              "rightValue": "High",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        496,
+        80
+      ],
+      "id": "213904f3-16c8-4d06-a047-901cfdf3979c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "58fca81d-30f9-4490-9e73-c4bb19c7071e",
+              "name": "Message",
+              "value": "Automation Required ! You are at Risk !",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        -16
+      ],
+      "id": "daac0b90-d5f7-431d-a98a-2ccf40266ac9",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e5ad6004-016b-4a5c-9d94-011b1d68c6e9",
+              "name": "Message",
+              "value": "Your System is Highly Automated !",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        176
+      ],
+      "id": "b9640195-7830-4db2-b528-701569734b52",
+      "name": "Edit Fields2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "569cbdd1-70b4-4cd0-916f-f2695c46aff9",
+  "meta": {
+    "instanceId": "064d3684dbc590a1f1f10c39f05139c5ad81cb84afcb0669bf9381aa04fd1213"
+  },
+  "id": "6p5H6qnMczTUD9co",
+  "tags": []
+}

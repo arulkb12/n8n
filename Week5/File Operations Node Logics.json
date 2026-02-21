@@ -1,0 +1,105 @@
+{
+  "name": "File Operations Node Logics",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6dd1ea40-27c6-46a9-8e63-642d90ac3993",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"supply_chain_shipments\": [\n    {\n      \"po_number\": \"PO-2026-0001\",\n      \"vendor\": {\n        \"vendor_id\": \"VEND-1001\",\n        \"vendor_name\": \"Shenzhen Global Electronics Co.\",\n        \"vendor_country\": \"China\",\n        \"vendor_city\": \"Shenzhen\",\n        \"incoterms\": \"FOB\",\n        \"payment_terms\": \"Net 30\"\n      },\n      \"product_details\": [\n        {\n          \"sku\": \"ELEC-TV-55-4K\",\n          \"product_name\": \"55 inch 4K LED TV\",\n          \"category\": \"Consumer Electronics\",\n          \"quantity_ordered\": 1200,\n          \"unit_cost_usd\": 320,\n          \"total_cost_usd\": 384000\n        }\n      ],\n      \"shipment\": {\n        \"shipment_id\": \"SHIP-2026-0001\",\n        \"shipment_mode\": \"Ocean\",\n        \"container_number\": \"MSKU1234567\",\n        \"container_type\": \"40HQ\",\n        \"shipment_date\": \"2026-01-10\",\n        \"estimated_departure_date\": \"2026-01-12\",\n        \"estimated_arrival_date\": \"2026-02-05\",\n        \"actual_arrival_date\": \"2026-02-07\",\n        \"carrier\": \"Maersk Line\",\n        \"bill_of_lading_number\": \"BL-77889901\"\n      },\n      \"origin_port\": {\n        \"port_name\": \"Yantian International Container Terminal\",\n        \"port_code\": \"CNYTN\",\n        \"country\": \"China\"\n      },\n      \"destination_port\": {\n        \"port_name\": \"Port of Los Angeles\",\n        \"port_code\": \"USLAX\",\n        \"country\": \"USA\"\n      },\n      \"customs\": {\n        \"customs_clearance_status\": \"Cleared\",\n        \"hs_code\": \"852872\",\n        \"duties_paid_usd\": 18000,\n        \"customs_broker\": \"Global Customs LLC\"\n      },\n      \"distribution_center\": {\n        \"dc_id\": \"DC-CA-01\",\n        \"dc_name\": \"West Coast Regional DC\",\n        \"dc_type\": \"Regional Distribution Center\",\n        \"dc_location\": {\n          \"city\": \"Ontario\",\n          \"state\": \"California\",\n          \"country\": \"USA\",\n          \"postal_code\": \"91761\"\n        },\n        \"warehouse_capacity_units\": 500000,\n        \"inventory_received_date\": \"2026-02-09\"\n      },\n      \"logistics_metrics\": {\n        \"lead_time_days\": 28,\n        \"transit_time_days\": 24,\n        \"on_time_delivery\": false,\n        \"delay_reason\": \"Port congestion\",\n        \"carbon_emission_tons\": 18.5\n      },\n      \"status\": \"Delivered with Delay\"\n    },\n    {\n      \"po_number\": \"PO-2026-0002\",\n      \"vendor\": {\n        \"vendor_id\": \"VEND-2005\",\n        \"vendor_name\": \"Hanoi Textile Manufacturing Ltd.\",\n        \"vendor_country\": \"Vietnam\",\n        \"vendor_city\": \"Hanoi\",\n        \"incoterms\": \"CIF\",\n        \"payment_terms\": \"Net 45\"\n      },\n      \"product_details\": [\n        {\n          \"sku\": \"APP-TSHIRT-001\",\n          \"product_name\": \"Cotton T-Shirt\",\n          \"category\": \"Apparel\",\n          \"quantity_ordered\": 50000,\n          \"unit_cost_usd\": 3.20,\n          \"total_cost_usd\": 160000\n        }\n      ],\n      \"shipment\": {\n        \"shipment_id\": \"SHIP-2026-0002\",\n        \"shipment_mode\": \"Ocean\",\n        \"container_number\": \"TGHU9876543\",\n        \"container_type\": \"40GP\",\n        \"shipment_date\": \"2026-01-20\",\n        \"estimated_departure_date\": \"2026-01-22\",\n        \"estimated_arrival_date\": \"2026-02-15\",\n        \"actual_arrival_date\": \"2026-02-14\",\n        \"carrier\": \"MSC Shipping\",\n        \"bill_of_lading_number\": \"BL-99887722\"\n      },\n      \"origin_port\": {\n        \"port_name\": \"Port of Hai Phong\",\n        \"port_code\": \"VNHPH\",\n        \"country\": \"Vietnam\"\n      },\n      \"destination_port\": {\n        \"port_name\": \"Port of Long Beach\",\n        \"port_code\": \"USLGB\",\n        \"country\": \"USA\"\n      },\n      \"customs\": {\n        \"customs_clearance_status\": \"Cleared\",\n        \"hs_code\": \"610910\",\n        \"duties_paid_usd\": 12000,\n        \"customs_broker\": \"Pacific Trade Brokers\"\n      },\n      \"distribution_center\": {\n        \"dc_id\": \"DC-TX-02\",\n        \"dc_name\": \"Central Apparel DC\",\n        \"dc_type\": \"Fulfillment Center\",\n        \"dc_location\": {\n          \"city\": \"Dallas\",\n          \"state\": \"Texas\",\n          \"country\": \"USA\",\n          \"postal_code\": \"75241\"\n        },\n        \"warehouse_capacity_units\": 750000,\n        \"inventory_received_date\": \"2026-02-16\"\n      },\n      \"logistics_metrics\": {\n        \"lead_time_days\": 25,\n        \"transit_time_days\": 23,\n        \"on_time_delivery\": true,\n        \"delay_reason\": null,\n        \"carbon_emission_tons\": 21.3\n      },\n      \"status\": \"Delivered On Time\"\n    }\n  ]\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "fec0eae5-aedd-4591-b43c-1e7ffedcefbd",
+      "name": "JSON File"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "4d711df4-1fde-444d-8d56-a39b59589323",
+      "name": "JSON to CSV"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "f54dd693-e111-4138-9a1e-bf62cef0ab45",
+      "name": "Extract from CSV file"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "JSON File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON File": {
+      "main": [
+        [
+          {
+            "node": "JSON to CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON to CSV": {
+      "main": [
+        [
+          {
+            "node": "Extract from CSV file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "52c707ed-5f5f-4a48-bd7a-f6602227a1b7",
+  "meta": {
+    "instanceId": "064d3684dbc590a1f1f10c39f05139c5ad81cb84afcb0669bf9381aa04fd1213"
+  },
+  "id": "SbAPpZqbMwDM0CmC",
+  "tags": []
+}

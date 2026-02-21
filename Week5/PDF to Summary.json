@@ -1,0 +1,156 @@
+{
+  "name": "PDF to Summary",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "download": true
+        }
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "62304c7e-9106-4295-ba46-f705568ab10d",
+      "name": "Telegram Trigger",
+      "webhookId": "9eb68614-f563-47e7-b71f-2a75ad77ded4",
+      "credentials": {
+        "telegramApi": {
+          "id": "GeyGnhnv7hlGLmNG",
+          "name": "akuserchat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "8e3812c7-1675-4d42-a35e-6d40ed91b0c0",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini-2025-04-14",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI-2025-04-14"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are an expert summarizer , summarize the file in a very high level way. "
+            },
+            {
+              "content": "=Summaryize the below input {{ $json.text }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "88c8b69d-82bd-4b83-8276-1adbd0268233",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "wpWFuimbtmZRS3vo",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output[0].content[0].text }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        768,
+        0
+      ],
+      "id": "de4d72bf-04c6-41b0-9df5-b3e80aea7ca1",
+      "name": "Send a text message",
+      "webhookId": "9afc5843-3c5a-49e8-a37d-077501616c75",
+      "credentials": {
+        "telegramApi": {
+          "id": "GeyGnhnv7hlGLmNG",
+          "name": "akuserchat"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8a0158f8-a9cc-4fca-9a10-4fce7ef785be",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "064d3684dbc590a1f1f10c39f05139c5ad81cb84afcb0669bf9381aa04fd1213"
+  },
+  "id": "pymWHtxmahnRQmnq",
+  "tags": []
+}

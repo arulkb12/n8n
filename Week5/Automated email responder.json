@@ -1,0 +1,131 @@
+{
+  "name": "Automated email responder",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4431ec32-d5ba-4bed-a481-f0cac03c8516",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "42OU81s54egAEzKh",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini-2025-04-14",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI-2025-04-14"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are a professional business communication expert skilled in writing clear, polite, and effective email responses across corporate environments.\n\nAnalyze the incoming email and draft a well-structured response that:\nClearly addresses all points mentioned\nMaintains professionalism\nProvides clarity or next steps where needed\nKeeps the message concise and structured\n\nThe incoming email is:\nAdditional context (if any):\n\nIndustry:\nRelationship with sender (client / manager / colleague / vendor):\nUrgency level:\nDesired outcome:\nIf no additional context is provided, assume a neutral professional setting.\n\nExample 1 – Clarification Request\n\nIncoming Email:\n“Can you share the updated delivery timeline? We haven’t received the revised schedule yet.”\n\nResponse Style Example:\n\nSubject: Updated Delivery Timeline\n\nDear [Name],\n\nThank you for your message. Please find below the revised delivery schedule as requested. The updated timeline reflects the recent adjustments discussed.\n\nKindly review and let me know if any further clarification is needed.\n\nBest regards,\n[Your Name]\n\nExample 2 – Meeting Confirmation\n\nIncoming Email:\n“Are you available tomorrow at 3 PM to discuss the automation workflow?”\n\nResponse Style Example:\nSubject: Re: Meeting Confirmation\n\nHi [Name],\n\nYes, I am available tomorrow at 3 PM. Please feel free to share the meeting invite, and I will join accordingly.\n\nLooking forward to our discussion.\n\nRegards,\n[Your Name]\n\nTone Guidelines:\nProfessional and respectful\nClear and concise\nSolution-oriented\nConfident but not aggressive\nAvoid overly complex language\nStructure Guidelines:\nGreeting\nAcknowledgment of the email\nDirect response / answers\nNext steps (if applicable)\nProfessional closing\nOutput Requirements:\nProvide subject line if appropriate\nKeep response between 120–200 words\nAvoid unnecessary filler\nNo emojis"
+            },
+            {
+              "content": "=Write a reply to the email\n\nSubject:  {{ $json.Subject }}\nFrom: {{ $json.From }}\nBody: {{ $json.snippet }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "084c17bd-cbfc-4ea2-9099-66e0ad64e162",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "wpWFuimbtmZRS3vo",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "message": "={{ $json.output[0].content[0].text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        0
+      ],
+      "id": "ad29607b-055c-4fe0-ae11-1d8d75a5a394",
+      "name": "Reply to a message",
+      "webhookId": "e308bc98-d4e2-4705-9848-36df4dc7828d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "42OU81s54egAEzKh",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Reply to a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "b386b082-3476-48aa-9847-4336f0ea880b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "064d3684dbc590a1f1f10c39f05139c5ad81cb84afcb0669bf9381aa04fd1213"
+  },
+  "id": "0YJZSsNnvaUif6DX",
+  "tags": []
+}

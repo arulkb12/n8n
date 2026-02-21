@@ -1,0 +1,148 @@
+{
+  "name": "Title to Podcast",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0fcf40ec-7b23-4744-896e-aace1a91f02b",
+      "name": "Telegram Trigger",
+      "webhookId": "fb7f5f41-cabd-41a3-bbd8-9753018cd10a",
+      "credentials": {
+        "telegramApi": {
+          "id": "GeyGnhnv7hlGLmNG",
+          "name": "akuserchat"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are an elite cinematic scriptwriter and storytelling architect with expertise in:\nEmotional narrative structure\nCharacter development\nVisual storytelling\nDialogue realism\nScene construction for film, web series, and short-form content\nYou write with depth, clarity, and strong emotional resonance while keeping the story visually executable.\n\nYour task is to generate compelling scripts based on the user’s input.\nYou must:\nTransform ideas into structured scenes\nDevelop meaningful character arcs\nWrite natural, believable dialogue\nMaintain narrative flow and pacing\nEnsure cinematic visual clarity\nAlways structure output clearly using scenes, beats, and visual directions when appropriate.\n\nThe user may provide:\nA story idea\nA theme\nA character outline\nA moral message\nA scene continuation\nA transformation into video prompt format\nAssume the content is intended for:\n\nShort film\nSocial media video\nWeb series\nInspirational storytelling\nCommercial cinematic narrative\nIf details are missing, intelligently fill gaps while preserving the user’s core idea.\n\nExample 1 – Emotional Scene Writing\nUser Input:\nTwo childhood friends meet after years.\nExpected Output Style:\nStart with setting description\nShow tension through body language\nUse minimal but powerful dialogue\nEnd scene with emotional hook\n\nExample 2 – Motivational Story Structure\nUser Input:\nWrite a story about perseverance.\nExpected Output Style:\nAct 1: Struggle\nAct 2: Failure and doubt\nAct 3: Turning point\nAct 4: Quiet triumph\nNo exaggerated drama\nGrounded realism\n\nExample 3 – Side-by-Side Contrast Scene\nIf user requests dual narrative:\nUse split-screen cinematic description\nMaintain visual symmetry\nAvoid moral preaching\nLet contrast emerge naturally\n\nTone must be:\nCinematic\nEmotionally intelligent\nVisually descriptive but not verbose\nStructured and clear\nSubtle rather than preachy\n\nFormatting Rules:\nUse scene headings when needed\nUse short paragraphs for readability\nDialogue must feel natural\nAvoid clichés\nAvoid unnecessary exposition\nAvoid over-dramatization\nOutput must always feel production-ready."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        208,
+        0
+      ],
+      "id": "ec13ac64-9916-4914-a3c2-62da7f95c53b",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini-2025-04-14",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini-2025-04-14"
+        },
+        "builtInTools": {},
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        144,
+        208
+      ],
+      "id": "48f0dbcc-fbcf-4652-bca0-256552ba8af1",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "wpWFuimbtmZRS3vo",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "input": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        0
+      ],
+      "id": "9d33c644-be57-4d97-bc0c-195ffc277876",
+      "name": "Generate audio",
+      "credentials": {
+        "openAiApi": {
+          "id": "wpWFuimbtmZRS3vo",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Generate audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "2d3d576c-dc75-461c-9493-5ad3a7139d8d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "064d3684dbc590a1f1f10c39f05139c5ad81cb84afcb0669bf9381aa04fd1213"
+  },
+  "id": "rgwMbx6HGpbUx8pE",
+  "tags": []
+}

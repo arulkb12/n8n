@@ -1,0 +1,250 @@
+{
+  "name": "API Automation",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -480,
+        -16
+      ],
+      "id": "e54cc724-d82b-48da-9b8f-cbd5e625feed",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "sendTo": "arulkumarbarathan@gmail.com",
+        "subject": "SE n8n Demo ",
+        "emailType": "text",
+        "message": "Built an Automated Supply Chain Vendor → Retail Delivery Status Bot using n8n 📦📊🤖\n\nThis project focused on tracking delivery delays and automatically reporting insights.\n\nHere’s the workflow I designed:\n\n🔹 Bot Trigger – Initiates the workflow\n🔹 Convert Excel to JSON – Structured the shipment data\n🔹 JavaScript Logic – Calculated delivery delay (Expected vs Delivered date)\n🔹 IF Conditions – Identified the highest delay time\n🔹 Telegram Integration – Sent a summarized delay report automatically\n\nInstead of manually reviewing spreadsheets, the system:\n\n✔️ Calculates delay instantly\n✔️ Identifies the most delayed vendor\n✔️ Shares a concise summary to Telegram\n\nThis wasn’t just automation.\nIt was operational visibility + automated decision reporting.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        32
+      ],
+      "id": "2da7800f-4f6d-437b-b5da-82257ded8b0b",
+      "name": "Send a message",
+      "webhookId": "0255ce00-714e-4832-ae2f-ed4c33840eca",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "42OU81s54egAEzKh",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "SEDemon8n",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {
+          "simplifyOutput": true
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -32,
+        32
+      ],
+      "id": "ad0c9220-0566-404d-b327-706f0bcf7828",
+      "name": "Create folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "O23fCCT4KwousLmc",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "folderId": "1stQh-HWfZv3bZTnUGNJabw31zIQsVYn-",
+        "title": "1st n8n Project"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        176,
+        32
+      ],
+      "id": "3756f8f6-04ab-4ab9-bf99-4ff5982c7885",
+      "name": "Create a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "jLreaNQjPUKfxx8w",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1FAuXDsJCXT6iRp-rvLra6AuiLtksiDa3qhkD3y9bF2I",
+          "mode": "list",
+          "cachedResultName": "first calculation",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FAuXDsJCXT6iRp-rvLra6AuiLtksiDa3qhkD3y9bF2I/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1274044143,
+          "mode": "list",
+          "cachedResultName": "n8n-sheet-attendence",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FAuXDsJCXT6iRp-rvLra6AuiLtksiDa3qhkD3y9bF2I/edit#gid=1274044143"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "1st Project": "Here is the data"
+          },
+          "matchingColumns": [
+            "1st Project"
+          ],
+          "schema": [
+            {
+              "id": "1st Project",
+              "displayName": "1st Project",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        400,
+        208
+      ],
+      "id": "4edba11d-05ad-4084-b72a-f1c5420f4f94",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "nKwPpXDYHxIGxSb2",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "arulkumarbarathan@gmail.com",
+          "mode": "list",
+          "cachedResultName": "arulkumarbarathan@gmail.com"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        544,
+        16
+      ],
+      "id": "a5085f53-3094-499c-9f3d-356c57e0b7d2",
+      "name": "Create an event",
+      "executeOnce": false,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "nYYd6Un9j7vxKCEc",
+          "name": "Google Calendar account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Create folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create folder": {
+      "main": [
+        [
+          {
+            "node": "Create a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a document": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Create an event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "a4a0dd7d-62e2-4900-af22-dec99f3a5ff1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "064d3684dbc590a1f1f10c39f05139c5ad81cb84afcb0669bf9381aa04fd1213"
+  },
+  "id": "AqIAKbXwQINZmpn7",
+  "tags": []
+}

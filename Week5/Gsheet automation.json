@@ -1,0 +1,210 @@
+{
+  "name": "Gsheet automation",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "06eb3e36-3d22-4465-9954-0bbaeb454bc9",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1kE4Phjb4NqsTWjkOiFAO8mESfvvejPTmGE0nJ3iLS2E",
+          "mode": "list",
+          "cachedResultName": "vendor_shipment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kE4Phjb4NqsTWjkOiFAO8mESfvvejPTmGE0nJ3iLS2E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kE4Phjb4NqsTWjkOiFAO8mESfvvejPTmGE0nJ3iLS2E/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "ce3deadf-725f-466e-aa24-60b253935a9d",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "nKwPpXDYHxIGxSb2",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all incoming items\nconst items = $input.all();\n\n// Helper function to parse DD-MM-YYYY safely\nfunction parseDate(dateString) {\n  if (!dateString) return null;\n\n  const parts = dateString.split(\"-\");\n  if (parts.length !== 3) return null;\n\n  const [day, month, year] = parts.map(Number);\n  return new Date(year, month - 1, day);\n}\n\nreturn items.map(item => {\n\n  const data = { ...item.json };\n\n  // Dynamically find date fields (case insensitive)\n  const expectedKey = Object.keys(data).find(key =>\n    key.toLowerCase().includes(\"expected\")\n  );\n\n  const deliveredKey = Object.keys(data).find(key =>\n    key.toLowerCase().includes(\"delivered\")\n  );\n\n  let delayDays = 0;\n\n  if (expectedKey && deliveredKey) {\n    const expectedDate = parseDate(data[expectedKey]);\n    const deliveredDate = parseDate(data[deliveredKey]);\n\n    if (expectedDate && deliveredDate) {\n      const diffTime = deliveredDate - expectedDate;\n      delayDays = Math.max(\n        0,\n        Math.ceil(diffTime / (1000 * 60 * 60 * 24))\n      );\n    }\n  }\n\n  return {\n    json: {\n      ...data,\n      \"Delay Delivery Days\": delayDays\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "55b336e9-fc44-4f22-8dd0-491b2839ac41",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1kE4Phjb4NqsTWjkOiFAO8mESfvvejPTmGE0nJ3iLS2E",
+          "mode": "list",
+          "cachedResultName": "vendor_shipment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kE4Phjb4NqsTWjkOiFAO8mESfvvejPTmGE0nJ3iLS2E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1kE4Phjb4NqsTWjkOiFAO8mESfvvejPTmGE0nJ3iLS2E/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Vendor Name": "={{ $json['Vendor Name'] }}",
+            "Delay Delivery": "={{ $json['Delay Delivery Days'] }}",
+            "Shipment ID": "={{ $json[\"Shipment ID\"] }}"
+          },
+          "matchingColumns": [
+            "Vendor Name"
+          ],
+          "schema": [
+            {
+              "id": "Vendor Name",
+              "displayName": "Vendor Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Shipment ID",
+              "displayName": "Shipment ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Expected Date",
+              "displayName": "Expected Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Delivered Date",
+              "displayName": "Delivered Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Delay Delivery",
+              "displayName": "Delay Delivery",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        0
+      ],
+      "id": "d2a5fafd-6800-4499-997e-42b6dfc516e1",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "nKwPpXDYHxIGxSb2",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "dbe450d2-a2a1-4671-95ca-2f08e45eed5e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "064d3684dbc590a1f1f10c39f05139c5ad81cb84afcb0669bf9381aa04fd1213"
+  },
+  "id": "iTHWULnV1lDUehnb",
+  "tags": []
+}
